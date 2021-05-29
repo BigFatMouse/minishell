@@ -1,14 +1,37 @@
 #include "minishell.h"
 
-// 1 - Скопировать envp в свой список(ДЛЯ ЗАЩИТЫ)
-// 2 - Написать функцию export, с добавление переменных в свой список (см. пункт 1)
-// 3 - Написать unset, которая удалит переменную из списка (см. пунк 1)
-// 4 - Написать просто export, тот же самый список что в 1 пункте, но отсортированный strcmp, и с прификсом declare -x.
+// copy_env - копирует envp в свой env-список(ДЛЯ ЗАЩИТЫ)
+// print_list - печатет env-список
+// export - добавляет переменную в env-список, если ее там нет или заменяет существующую
+// unset - удаляет переменную из env-списка
+// export_sort - выводит отсортированный env-список с прификсом declare -x
+// get_env_value - принмает имя переменной из env-списка, возвращает значение этой перменной 
+// get_env_name - берет из строки env имя переменной до =
 
+// - добавить кавычки в export_sort
 
-void ft_error(char *str)
+void	ft_error(char *str)
 {
 	ft_putendl_fd(str, 2);
+}
+
+char	*get_env_name(char *str)
+{
+	int		i;
+	int		len;
+	char	*res;
+
+	i = 0;
+	len = 0;
+
+	while (str[len] != '=')
+	{
+		if (str[len] == '\0')
+			return (str);
+		len++;
+	}
+	res = ft_substr(str, 0, len + 1);
+	return (res);
 }
 
 void	print_list(t_list *list)
@@ -39,39 +62,67 @@ void	copy_env(char **envp, t_list **head)
 	}
 }
 
-void	export(char *name_variable, char *value_variable, t_list *list)
+// void	export(char *name_variable, char *value_variable, t_list *list)
+// {
+// 	t_list	*elem;
+// 	t_list	*tmp;
+// 	char	*str1;
+// 	char	*str;
+// 	int		i;
+
+// 	str1 = ft_strjoin(name_variable, "=");
+// 	str = ft_strjoin(str1, value_variable);
+// 	i = 0;
+	
+// 	elem = list;
+// 	while (elem)
+// 	{
+// 		if (!ft_strncmp(elem->content, str1, ft_strlen(str1))) // пробегаемся по списку, ищем есть ли уже такая переменная
+// 		{
+// 			tmp = elem;
+// 			free(tmp->content);
+// 			elem->content = ft_strdup(str); //если такая переменная уже есть, перезаписываем
+// 			i++;
+// 			free(str);
+// 		}
+// 		elem = elem->next;
+// 	}
+// 	if (i == 0) // если такой переменной нет, добавляем в конец списка
+// 	{
+// 		elem = ft_lstnew(str);
+// 		if (!elem)
+// 			ft_error(ERR_CODE_0);
+// 		ft_lstadd_back(&list, elem);
+// 	}
+// 	free(str1);
+// }
+
+int	export(char *str, t_list *list)
 {
 	t_list	*elem;
 	t_list	*tmp;
 	char	*str1;
-	char	*str;
-	int		i;
 
-	str1 = ft_strjoin(name_variable, "=");
-	str = ft_strjoin(str1, value_variable);
-	i = 0;
+	str1 = get_env_name(str);
 	
 	elem = list;
 	while (elem)
 	{
 		if (!ft_strncmp(elem->content, str1, ft_strlen(str1))) // пробегаемся по списку, ищем есть ли уже такая переменная
 		{
-			tmp = elem;
-			free(tmp->content);
 			elem->content = ft_strdup(str); //если такая переменная уже есть, перезаписываем
-			i++;
-			free(str);
+			free(str1);
+			return (0);
 		}
 		elem = elem->next;
 	}
-	if (i == 0) // если такой переменной нет, добавляем в конец списка
-	{
-		elem = ft_lstnew(str);
-		if (!elem)
-			ft_error(ERR_CODE_0);
-		ft_lstadd_back(&list, elem);
-	}
+	// если такой переменной нет, добавляем в конец списка
+	elem = ft_lstnew(str);
+	if (!elem)
+		ft_error(ERR_CODE_0);
+	ft_lstadd_back(&list, elem);
 	free(str1);
+	return (0);
 }
 
 t_list	*add_prefix(t_list *list)
@@ -93,21 +144,24 @@ t_list	*add_prefix(t_list *list)
 		}
 		list = list->next;
 		ft_lstadd_back(&res, new);
-		//free(str);
 	}
 	return (res);
 }
 
-// t_list* add_prefix(t_list* list) 
-// {
-// 	t_list* result;
-	
-// 	if (list == NULL)
-// 		return NULL;
-// 	result = ft_lstnew(ft_strjoin("declare -x ", list->content));
-// 	result->next = ft_lstclone(list->next);
-// 	return result;
-// }
+char	*get_env_value(char *name_variable, t_list *list)
+{
+	char	*str1;
+
+	str1 = ft_strjoin(name_variable, "=");
+	while (list)
+	{
+		if (!ft_strncmp(list->content, str1, ft_strlen(str1)))
+			return (ft_strdup(list->content + ft_strlen(str1)));
+		list = list->next;
+	}
+	free(str1);
+	return (0);
+}
 
 void	export_sort(t_list *list)
 {
@@ -176,6 +230,9 @@ void	unset(char *name_variable, t_list **list)
 
 // int		main(int argc, char **argv, char **envp)
 // {
+
+// 	char *str = "abcd=456";
+// 	printf("%s\n", get_env_name(str));
 // 	t_list	*head;
 // 	t_list	*elem;
 // 	int		i;
@@ -184,19 +241,30 @@ void	unset(char *name_variable, t_list **list)
 // 	i = 0;
 // 	(void)argc;
 // 	(void)argv;
-
-// 	while (envp[i] != NULL)
-//     {
-//         elem = ft_lstnew(envp[i]);
-// 		if (!elem)
-// 			ft_error(ERR_CODE_0);
-// 		ft_lstadd_back(&head, elem);
-// 		i++;
-//     }
-// 	// export("a", "42", head);
-// 	// export("B", "42", head);
-// 	printf("----------------------------\n");
+// 	copy_env(envp, &head);
 // 	print_list(head);
+
+// 	printf("----------------------------\n");
+
+	// while (envp[i] != NULL)
+	// {
+	// 	printf("%s\n", envp[i]);
+	// 	i++;
+	// }
+
+	// printf("----------------------------\n");
+	// while (envp[i] != NULL)
+    // {
+    //     elem = ft_lstnew(envp[i]);
+	// 	// if (!elem)
+	// 	// 	ft_error(ERR_CODE_0);
+	// 	ft_lstadd_back(&head, elem);
+	// 	i++;
+    // }
+	// export("a", "42", head);
+	// export("B", "42", head);
+	// print_list(head);
+	// printf("----------------------------\n");
 // 	//elem = add_prefix(head);
 // 	// export("a", "228", head);
 // 	// printf("----------------------------\n");
@@ -206,16 +274,14 @@ void	unset(char *name_variable, t_list **list)
 // 	printf("----------------------------\n");
 // 	print_list(elem);
 	
-// 	while(1)
-// 	{
-// 		;
-// 	}
+	// while(1)
+	// {
+	// 	;
+	// }
 	
 // 	// char *str = "abc";
 // 	// printf("%s\n", str);
 // 	// //str = ft_strjoin("declare -x ", str);
 // 	// add_prefix(&str);
 // 	// printf("%s\n", str);while(1)
-	
-	
 // }

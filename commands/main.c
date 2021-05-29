@@ -11,9 +11,11 @@ int		main(int argc, char **argv, char **envp)
 	(void)argv;
 	
 	copy_env(envp, &env_list);
+	printf("----------------------------\n");
 	print_list(env_list);
 	
 	printf("----------------------------\n");
+	// printf("HOME=%s\n", get_env_value("HOME", env_list));
 
 	// while (envp[i] != NULL)
     // {
@@ -24,17 +26,20 @@ int		main(int argc, char **argv, char **envp)
 	// 	i++;
     // }
 	
-	export("a", "42", env_list);
-	export("B", "42", env_list);
-	//printf("----------------------------\n");
+	export("a=123", env_list);
+	export("B=42", env_list);
 	print_list(env_list);
-	//elem = add_prefix(env_list);
-	export("a", "228", env_list);
 	printf("----------------------------\n");
-	print_list(elem);
-	//export_sort(env_list);
-	// //unset("B", &head);
-	//printf("----------------------------\n");
+	// print_list(env_list);
+	// elem = add_prefix(env_list);
+	// export("home", "228", env_list);
+	export("HOME=42", env_list);
+	print_list(env_list);
+	printf("----------------------------\n");
+
+	// export_sort(env_list);
+	// unset("B", &head);
+	// printf("----------------------------\n");
 	// print_list(elem);
 	
 	// while(1)
