@@ -8,7 +8,7 @@
 // get_env_value - принмает имя переменной из env-списка, возвращает значение этой перменной 
 // get_env_name - берет из строки env имя переменной до =
 
-// - добавить кавычки в export_sort
+// - добавить чеки для export и unset
 
 void	ft_error(char *str)
 {
@@ -30,7 +30,7 @@ char	*get_env_name(char *str)
 			return (str);
 		len++;
 	}
-	res = ft_substr(str, 0, len + 1);
+	res = ft_substr(str, 0, len);
 	return (res);
 }
 
@@ -43,6 +43,35 @@ void	print_list(t_list *list)
 	{
 		ft_putendl_fd(tmp->content, 1);
 		tmp = tmp->next;
+	}
+}
+
+void	print_export_list(t_list *list)
+{
+	char	*str;
+	int		i;
+
+	while (list)
+	{
+		ft_putstr_fd("declare -x ", 1);
+		str = ft_strdup(list->content);
+		i = 0;
+		while(str[i] != '=')
+		{
+			write(1, &str[i], 1);
+			i++;
+		}
+		write(1, "=", 1);
+		ft_putchar_fd(34, 1);
+		while(str[i++] != '\0')
+		{
+			i++;
+			write(1, &str[i], 1);
+		}
+		free(str);
+		ft_putchar_fd(34, 1);
+		write(1, "\n", 1);
+		list = list->next;
 	}
 }
 
@@ -97,26 +126,28 @@ void	copy_env(char **envp, t_list **head)
 // 	free(str1);
 // }
 
-int	export(char *str, t_list *list)
+int		export(char *str, t_list *list)
 {
 	t_list	*elem;
 	t_list	*tmp;
 	char	*str1;
+	char	*name_variable;
 
-	str1 = get_env_name(str);
+	name_variable = get_env_name(str);
+	str1 = ft_strjoin(name_variable, "=");
+	free(name_variable);
 	
 	elem = list;
 	while (elem)
 	{
-		if (!ft_strncmp(elem->content, str1, ft_strlen(str1))) // пробегаемся по списку, ищем есть ли уже такая переменная
+		if (!ft_strncmp(elem->content, str1, ft_strlen(str1)))
 		{
-			elem->content = ft_strdup(str); //если такая переменная уже есть, перезаписываем
+			elem->content = ft_strdup(str);
 			free(str1);
 			return (0);
 		}
 		elem = elem->next;
 	}
-	// если такой переменной нет, добавляем в конец списка
 	elem = ft_lstnew(str);
 	if (!elem)
 		ft_error(ERR_CODE_0);
@@ -193,7 +224,7 @@ void	export_sort(t_list *list)
 		}
 		i++;
 	}
-	print_list(add_prefix(list));
+	print_export_list(list);
 }
 
 void	unset(char *name_variable, t_list **list)
@@ -205,7 +236,7 @@ void	unset(char *name_variable, t_list **list)
 	head = *list;
 	str1 = ft_strjoin(name_variable, "=");
 	
-	if (!ft_strncmp(head->content, str1, ft_strlen(str1))) //отдельно удаление первого элемента листа
+	if (!ft_strncmp(head->content, str1, ft_strlen(str1)))
 	{
 		tmp = *list;
 		*list = (*list)->next;
@@ -215,7 +246,7 @@ void	unset(char *name_variable, t_list **list)
 	{
 		while (head->next)
 		{
-			if (!ft_strncmp(head->next->content, str1, ft_strlen(str1)))  // если находим совпадение в следующем элементе списка
+			if (!ft_strncmp(head->next->content, str1, ft_strlen(str1)))
 			{
 				tmp = head->next;
 				head->next = head->next->next;

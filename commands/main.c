@@ -37,15 +37,15 @@ int		main(int argc, char **argv, char **envp)
 	print_list(env_list);
 	printf("----------------------------\n");
 
-	// export_sort(env_list);
-	// unset("B", &head);
+	export_sort(env_list);
+	// unset("a", &env_list);
 	// printf("----------------------------\n");
-	// print_list(elem);
+	// print_list(env_list);
 	
-	// while(1)
-	// {
-	// 	;
-	// }
+	while(1)
+	{
+		;
+	}
 	
 	// char *str = "abc";
 	// printf("%s\n", str);
