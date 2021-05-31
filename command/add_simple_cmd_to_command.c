@@ -1,39 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_simple_command.c                              :+:      :+:    :+:   */
+/*   add_simple_cmd_to_command.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/05 21:54:10 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/17 01:15:20 by klanie           ###   ########.fr       */
+/*   Created: 2021/05/10 19:19:58 by klanie            #+#    #+#             */
+/*   Updated: 2021/05/10 19:46:55 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "command.h"
 #include "simple_command.h"
 
-static void	free_args(char **args, size_t size)
+void	add_simple_cmd_to_command(t_command **cmd, t_simple_command *scmd)
 {
-	size_t	i;
-
-	i = 0;
-	while (i < size)
-	{
-		if (args[i])
-			free(args[i]);
-		i++;
-	}
-	free(args);
-}
-
-void	free_simple_command(void *cmd)
-{
-	t_simple_command	*c;
-
-	c = (t_simple_command *)cmd;
-	if (!c)
-		return ;
-	if (c->args && c->args_num > 0)
-		free_args(c->args, c->args_num);
-	free(c);
+	if ((*cmd)->available_commands_num < ((*cmd)->commands_num + 1))
+		*cmd = expand_command(*cmd);
+	(*cmd)->commands[(*cmd)->commands_num] = scmd;
+	(*cmd)->commands_num++;
 }

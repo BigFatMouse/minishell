@@ -6,13 +6,14 @@
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 21:20:20 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/06 00:57:10 by klanie           ###   ########.fr       */
+/*   Updated: 2021/05/17 01:15:34 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SIMPLE_COMMAND_H
 # define SIMPLE_COMMAND_H
 # include <stdlib.h>
+# include "libft.h"
 
 # define START_AVAILABLE_ARGS	5
 # define ARGS_EXPAND_STEP		5
@@ -38,6 +39,10 @@ t_simple_command	*new_simple_command(size_t args_num);
 t_simple_command	*expand_simple_command(t_simple_command *cmd);
 
 // Free the memory occupied by the element (including content)
-void				free_simple_command(t_simple_command **cmd);
+void				free_simple_command(void *cmd);
+
+// Adds an argument. Expands the allocated memory as needed
+void				add_arg_to_simple_command(t_simple_command **cmd, \
+											char *arg);
 
 #endif

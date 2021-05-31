@@ -1,39 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_simple_command.c                              :+:      :+:    :+:   */
+/*   expand_buffer.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/05 21:54:10 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/17 01:15:20 by klanie           ###   ########.fr       */
+/*   Created: 2021/05/16 22:18:36 by klanie            #+#    #+#             */
+/*   Updated: 2021/05/16 22:24:15 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "simple_command.h"
+#include "parser.h"
 
-static void	free_args(char **args, size_t size)
+t_buffer	*expand_buffer(t_buffer *b)
 {
-	size_t	i;
+	t_buffer	*new_b;
 
-	i = 0;
-	while (i < size)
-	{
-		if (args[i])
-			free(args[i]);
-		i++;
-	}
-	free(args);
-}
-
-void	free_simple_command(void *cmd)
-{
-	t_simple_command	*c;
-
-	c = (t_simple_command *)cmd;
-	if (!c)
-		return ;
-	if (c->args && c->args_num > 0)
-		free_args(c->args, c->args_num);
-	free(c);
+	new_b = new_buffer(b->size + 128);
+	if (!new_b)
+		return (NULL);
+	ft_strlcpy(new_b->content, b->content, b->size + 1);
+	new_b->size = b->size + 128;
+	new_b->pos = b->pos;
+	free_buffer(b);
+	return (new_b);
 }

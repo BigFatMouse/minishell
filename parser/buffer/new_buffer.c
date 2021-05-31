@@ -1,35 +1,33 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   new_simple_command.c                               :+:      :+:    :+:   */
+/*   new_buffer.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/05 21:47:43 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/10 16:46:48 by klanie           ###   ########.fr       */
+/*   Created: 2021/05/16 22:18:02 by klanie            #+#    #+#             */
+/*   Updated: 2021/05/17 03:07:06 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "simple_command.h"
+#include "parser.h"
 
-t_simple_command	*new_simple_command(size_t args_num)
+t_buffer	*new_buffer(size_t len)
 {
-	t_simple_command	*scmd;
-	size_t				args_size;
+	t_buffer	*b;
 
-	scmd = NULL;
-	scmd = (t_simple_command *)malloc(sizeof(t_simple_command));
-	if (!scmd)
+	b = NULL;
+	b = (t_buffer *)malloc(sizeof(t_buffer));
+	if (!b)
 		return (NULL);
-	args_size = (args_num + 1) * sizeof(char *);
-	scmd->args_num = 0;
-	scmd->available_args_num = args_num;
-	scmd->args = (char **)malloc(args_size);
-	if (!scmd->args)
+	ft_memset(b, 0, sizeof(t_buffer));
+	b->content = (char *)malloc((len + 1) * sizeof(char));
+	if (!b->content)
 	{
-		free(scmd);
+		free(b);
 		return (NULL);
 	}
-	ft_memset(scmd->args, 0, args_size);
-	return (scmd);
+	ft_bzero(b->content, len + 1);
+	b->size = len;
+	return (b);
 }

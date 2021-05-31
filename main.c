@@ -1,39 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_simple_command.c                              :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/05 21:54:10 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/17 01:15:20 by klanie           ###   ########.fr       */
+/*   Created: 2021/05/17 02:08:43 by klanie            #+#    #+#             */
+/*   Updated: 2021/05/30 15:35:26 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "simple_command.h"
+#include "parser.h"
+#include "executor.h"
 
-static void	free_args(char **args, size_t size)
+int	main(int argc, char **argv, char **envp)
 {
-	size_t	i;
+	t_list		*env_list;
+	t_command	*cmd;
+	char		*str_cmd;
 
-	i = 0;
-	while (i < size)
+	(void) argc;
+	(void) argv;
+	env_list = NULL;
+	copy_env(envp, &env_list);
+	str_cmd = ft_strdup("export test=test; env");
+	while (*str_cmd)
 	{
-		if (args[i])
-			free(args[i]);
-		i++;
+		cmd = parse(&str_cmd, env_list);
+		exec_command(cmd, env_list);
 	}
-	free(args);
-}
-
-void	free_simple_command(void *cmd)
-{
-	t_simple_command	*c;
-
-	c = (t_simple_command *)cmd;
-	if (!c)
-		return ;
-	if (c->args && c->args_num > 0)
-		free_args(c->args, c->args_num);
-	free(c);
 }

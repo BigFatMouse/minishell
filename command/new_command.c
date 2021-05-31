@@ -1,35 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   new_simple_command.c                               :+:      :+:    :+:   */
+/*   new_command.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/05 21:47:43 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/10 16:46:48 by klanie           ###   ########.fr       */
+/*   Created: 2021/05/05 21:58:10 by klanie            #+#    #+#             */
+/*   Updated: 2021/05/10 17:47:48 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "simple_command.h"
+#include "command.h"
 
-t_simple_command	*new_simple_command(size_t args_num)
+t_command	*new_command(size_t scmd_num)
 {
-	t_simple_command	*scmd;
-	size_t				args_size;
+	t_command	*cmd;
+	size_t		scmd_size;
 
-	scmd = NULL;
-	scmd = (t_simple_command *)malloc(sizeof(t_simple_command));
-	if (!scmd)
+	cmd = NULL;
+	cmd = (t_command *)malloc(sizeof(t_command));
+	if (!cmd)
 		return (NULL);
-	args_size = (args_num + 1) * sizeof(char *);
-	scmd->args_num = 0;
-	scmd->available_args_num = args_num;
-	scmd->args = (char **)malloc(args_size);
-	if (!scmd->args)
+	scmd_size = ((scmd_num + 1) * sizeof(t_simple_command *));
+	cmd->commands_num = 0;
+	cmd->available_commands_num = scmd_num;
+	cmd->commands = (t_simple_command **)malloc(scmd_size);
+	if (!cmd->commands)
 	{
-		free(scmd);
+		free(cmd);
 		return (NULL);
 	}
-	ft_memset(scmd->args, 0, args_size);
-	return (scmd);
+	ft_memset(cmd->commands, 0, scmd_size);
+	return (cmd);
 }

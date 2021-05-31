@@ -6,7 +6,7 @@
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 20:47:18 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/06 00:57:56 by klanie           ###   ########.fr       */
+/*   Updated: 2021/05/17 02:03:14 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ typedef struct s_command
 {
 	int					available_commands_num;
 	int					commands_num;
-	t_simple_command	*commands;
+	t_simple_command	**commands;
 	char				*out_file;
 	char				*in_file;
 }	t_command;
@@ -43,6 +43,13 @@ t_command				*new_command(size_t cmd_num);
 t_command				*expand_command(t_command *cmd);
 
 // Free the memory occupied by the element (including content)
-void					free_command(t_command **cmd);
+void					free_command(void *cmd);
+
+// Adds a command. Expands the allocated memory as needed
+void					add_simple_cmd_to_command(t_command **cmd, \
+												t_simple_command *scmd);
+
+// Adds an argument to last SimpleCommand in Command
+void					add_arg_to_command(t_command *cmd, char *arg);
 
 #endif

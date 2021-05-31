@@ -1,39 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_simple_command.c                              :+:      :+:    :+:   */
+/*   pipe_handling.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/05 21:54:10 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/17 01:15:20 by klanie           ###   ########.fr       */
+/*   Created: 2021/05/17 10:46:34 by klanie            #+#    #+#             */
+/*   Updated: 2021/05/29 22:37:30 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "simple_command.h"
+#include "parser.h"
 
-static void	free_args(char **args, size_t size)
+char	*pipe_handling(t_command *cmd, t_buffer **buf, char *s)
 {
-	size_t	i;
+	t_simple_command	*sc;
 
-	i = 0;
-	while (i < size)
+	if ((*buf)->content)
 	{
-		if (args[i])
-			free(args[i]);
-		i++;
+		add_arg_to_command(cmd, (*buf)->content);
+		free(*buf);
+		*buf = new_buffer(START_BUFFER_SIZE);
+		if (!*buf)
+			return (NULL);
 	}
-	free(args);
-}
-
-void	free_simple_command(void *cmd)
-{
-	t_simple_command	*c;
-
-	c = (t_simple_command *)cmd;
-	if (!c)
-		return ;
-	if (c->args && c->args_num > 0)
-		free_args(c->args, c->args_num);
-	free(c);
+	sc = new_simple_command(START_AVAILABLE_ARGS);
+	if (!sc)
+		return (NULL);
+	add_simple_cmd_to_command(&cmd, sc);
+	return (s + 1);
 }

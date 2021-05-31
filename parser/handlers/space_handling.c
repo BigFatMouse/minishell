@@ -1,39 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   free_simple_command.c                              :+:      :+:    :+:   */
+/*   space_handling.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/05 21:54:10 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/17 01:15:20 by klanie           ###   ########.fr       */
+/*   Created: 2021/05/17 01:28:31 by klanie            #+#    #+#             */
+/*   Updated: 2021/05/17 03:07:34 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "simple_command.h"
+#include "parser.h"
 
-static void	free_args(char **args, size_t size)
+char	*space_handling(char *s, t_buffer **b, t_command *cmd)
 {
-	size_t	i;
-
-	i = 0;
-	while (i < size)
+	if (*(*b)->content != '\0')
 	{
-		if (args[i])
-			free(args[i]);
-		i++;
+		add_arg_to_command(cmd, (*b)->content);
+		free(*b);
+		*b = NULL;
+		*b = new_buffer(START_BUFFER_SIZE);
 	}
-	free(args);
-}
-
-void	free_simple_command(void *cmd)
-{
-	t_simple_command	*c;
-
-	c = (t_simple_command *)cmd;
-	if (!c)
-		return ;
-	if (c->args && c->args_num > 0)
-		free_args(c->args, c->args_num);
-	free(c);
+	while (*s == ' ')
+		s++;
+	return (s);
 }
