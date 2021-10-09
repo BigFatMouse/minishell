@@ -6,7 +6,7 @@
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 21:54:10 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/17 01:15:20 by klanie           ###   ########.fr       */
+/*   Updated: 2021/08/04 14:55:12 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	free_simple_command(void *cmd)
 	c = (t_simple_command *)cmd;
 	if (!c)
 		return ;
-	if (c->args && c->args_num > 0)
+	if (c->args)
 		free_args(c->args, c->args_num);
 	free(c);
 }

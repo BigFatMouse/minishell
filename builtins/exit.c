@@ -1,40 +1,96 @@
-#include "builtins.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhogg <mhogg@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/08/02 20:13:27 by mhogg             #+#    #+#             */
+/*   Updated: 2021/08/05 17:45:39 by mhogg            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-static int	ft_isnum(char *str)
+#include "builtins.h"
+#include <limits.h>
+
+static int	check_long(char *str, int minus)
 {
-	while (*str)
+	int					i;
+	unsigned long long	num;
+
+	num = 0;
+	i = 0;
+	if (minus)
+		i++;
+	while (str[i])
 	{
-		if (!ft_isdigit(*str))
+		num = num * 10 + (str[i] - '0');
+		if (num - 1 > LLONG_MAX || (num > LLONG_MAX && !minus))
 			return (0);
-		str++;
+		i++;
 	}
 	return (1);
 }
 
-int			exit_shell(char **cmd)
+static int	is_num(char *str)
+{
+	int					i;
+	int					minus;
+
+	i = 0;
+	minus = 0;
+	if (str[0] == '-' && str[1])
+	{
+		minus = 1;
+		i++;
+	}
+	while (str[i])
+	{
+		if (!ft_isdigit(str[i]))
+		{
+			puts("!");
+			return (0);
+		}
+		i++;
+	}
+	if (ft_atoi(str) == 0)
+		return (1);
+	return (check_long(str, minus));
+}
+
+static int	exit_error(char *cmd, char *err)
+{
+	ft_putendl_fd("exit", 2);
+	ft_putstr_fd("msh: exit: ", 2);
+	ft_putstr_fd(cmd, 2);
+	ft_putendl_fd(err, 2);
+	return (1);
+}
+
+int	exit_shell(char **cmd, t_data *data)
 {
 	int	errcode;
 
-	if (!cmd[0])
+	if (!cmd[1])
 	{
 		ft_putendl_fd("exit", 1);
-		exit(0);
+		exit(data->errcode);
 	}
-	if (!ft_isnum(cmd[0]))
+	else if (!is_num(cmd[1]))
 	{
-		ft_putendl_fd("minishell: exit: numeric argument required", 2);
-		errcode = 255;
-		return (1);
+		exit_error(cmd[1], ": numeric argument required");
+		data->errcode = 255;
+		exit(255);
 	}
-	else if (cmd[1])
+	else if (cmd[2])
 	{
-		ft_putendl_fd("minishell: exit: too many arguments", 2);
-		errcode = 1;
+		exit_error(NULL, "too many arguments");
+		data->errcode = 1;
 		return (1);
 	}
 	else
 	{
-		errcode = atoi(cmd[0]);
+		errcode = ft_atoi(cmd[1]);
 		ft_putendl_fd("exit", 1);
 		exit(errcode);
 	}

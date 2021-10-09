@@ -6,7 +6,7 @@
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 22:00:00 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/10 17:46:53 by klanie           ###   ########.fr       */
+/*   Updated: 2021/08/02 22:24:45 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,15 @@ t_command	*expand_command(t_command *cmd)
 	t_command	*new_cmd;
 
 	new_cmd = NULL;
-	new_cmd = new_command(cmd->available_commands_num + CMD_EXPAND_STEP);
+	new_cmd = new_command(cmd->available_commands_num + CMD_EXPAND_STEP, \
+							cmd->data);
 	if (new_cmd)
 	{
 		new_cmd->commands_num = cmd->commands_num;
+		new_cmd->heredocs = cmd->heredocs;
+		new_cmd->heredocs_num = cmd->heredocs_num;
 		copy_simple_commands(cmd, new_cmd, cmd->commands_num);
 	}
-	new_cmd->in_file = cmd->in_file;
-	new_cmd->out_file = cmd->out_file;
 	free(cmd->commands);
 	free(cmd);
 	return (new_cmd);

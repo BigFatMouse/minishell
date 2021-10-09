@@ -6,7 +6,7 @@
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 21:52:21 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/06 02:43:22 by klanie           ###   ########.fr       */
+/*   Updated: 2021/08/03 00:02:07 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,13 @@ t_simple_command	*expand_simple_command(t_simple_command *cmd)
 
 	new_cmd = NULL;
 	new_cmd = new_simple_command(cmd->available_args_num + \
-									ARGS_EXPAND_STEP);
+									ARGS_EXPAND_STEP, cmd->data, cmd->parent);
 	if (new_cmd)
 	{
 		new_cmd->args_num = cmd->args_num;
 		copy_args(cmd, new_cmd, cmd->args_num);
+		new_cmd->fd_in = cmd->fd_in;
+		new_cmd->fd_out = cmd->fd_out;
 	}
 	free(cmd->args);
 	free(cmd);

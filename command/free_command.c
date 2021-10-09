@@ -6,7 +6,7 @@
 /*   By: klanie <klanie@student.21-school.ru>       +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 22:02:09 by klanie            #+#    #+#             */
-/*   Updated: 2021/05/17 01:14:28 by klanie           ###   ########.fr       */
+/*   Updated: 2021/07/16 02:28:19 by klanie           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,15 @@ static void	free_simple_commands(t_simple_command **cmds, size_t size)
 	free(cmds);
 }
 
+static void	free_heredoc(void *h)
+{
+	char	*s;
+
+	s = (char *)h;
+	unlink(s);
+	free(s);
+}
+
 void	free_command(void *cmd)
 {
 	t_command	*c;
@@ -35,5 +44,6 @@ void	free_command(void *cmd)
 		return ;
 	if (c->commands && c->commands_num > 0)
 		free_simple_commands(c->commands, c->commands_num);
+	ft_lstclear(&c->heredocs, &free_heredoc);
 	free(cmd);
 }
